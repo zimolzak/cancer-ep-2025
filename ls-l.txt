@@ -1,0 +1,4 @@
+total 2280
+-rw-------@ 1 ajz  staff  581483 Feb 21 12:52 bcm_colorectal_cancer.NK.2.21.25.xlsx
+-rw-------  1 ajz  staff  584386 Jan  6 13:25 bcm_colorectal_cancer.xlsx
+-rw-r--r--  1 ajz  staff       0 Mar  5 11:00 ls-l.txt
