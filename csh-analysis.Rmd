@@ -1,0 +1,21 @@
+---
+title: "CSH Emergency Presentation"
+output: pdf_document
+---
+
+```{r libs}
+library(readxl)
+```
+
+
+```{r import}
+bcm_colorectal_cancer_NK_2_21_25 <- read_excel("bcm_colorectal_cancer.NK.2.21.25.xlsx", 
+    col_types = c("numeric", "text", "date", 
+        "text", "text", "text", "date", "date", 
+        "date", "text", "text", "date", "date"))
+```
+
+```{r print}
+dim(bcm_colorectal_cancer_NK_2_21_25)
+```
+
