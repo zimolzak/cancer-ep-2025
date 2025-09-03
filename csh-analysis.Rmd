@@ -5,6 +5,8 @@ output: pdf_document
 
 ```{r libs}
 library(readxl)
+library(dplyr)
+library(ggplot2)
 ```
 
 
@@ -17,5 +19,25 @@ bcm_colorectal_cancer_NK_2_21_25 <- read_excel("bcm_colorectal_cancer.NK.2.21.25
 
 ```{r print}
 dim(bcm_colorectal_cancer_NK_2_21_25)
+```
+
+```{r analze-ED-intervals}
+analytic_data <- bcm_colorectal_cancer_NK_2_21_25 %>% 
+  mutate(
+    ED_days = as.numeric(Date_of_first_diagnosis - ed_date, units="days"),
+    Inp_days = as.numeric(Date_of_first_diagnosis - ip_date, units="days"),
+    is_EP = case_when(
+      ED_days <= 30 ~ TRUE,
+      Inp_days <= 30 ~ TRUE,
+      .default = FALSE
+    )
+  )
+
+qplot(analytic_data$ED_days)
+qplot(analytic_data$Inp_days)
+
+summary(analytic_data$ED_days)
+
+table(analytic_data$is_EP)
 ```
 
