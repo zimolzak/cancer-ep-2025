@@ -35,6 +35,10 @@ analytic_data <- bcm_colorectal_cancer_NK_2_21_25 %>%
       .default = FALSE
     ),
     Age_yrs_at_dx = as.numeric(Date_of_first_diagnosis - birth_dt_tm, units="days") / 365.25,
+    race_desc_raw = case_when(
+      race_desc_raw == "Unable to determine" ~ "Unable to Determine",  # merge upper/lower case D
+      .default = race_desc_raw
+    ),
     Race = as.factor(race_desc_raw)
   )
 ```
@@ -119,8 +123,26 @@ t.test(Age_yrs_at_dx ~ is_EP, data = analytic_data)
 ## Race
 
 ```{r race-assoc, echo=FALSE}
-analytic_data %>% 
-  count(is_EP, Race) %>% 
-  pivot_wider(names_from = Race, values_from = n) %>% 
+race_p_table <- analytic_data %>% 
+  group_by(Race) %>% 
+  summarise(
+    Numer.EP = sum(is_EP),
+    Denom = n(),
+    Non.EP = Denom - Numer.EP,
+    Percent.EP = round(mean(is_EP) * 100, 1)
+  ) %>% 
+  arrange(desc(Denom))
+
+race_p_table %>% 
+  select(Race, Numer.EP, Denom, Percent.EP) %>% 
   kable()
+
+prop.test(race_p_table$Numer.EP, race_p_table$Denom)
+
+race_contingency <- race_p_table %>% 
+  select(Numer.EP, Non.EP)
+  
+fisher.test(race_contingency, simulate.p.value = TRUE)
+# 2e+08 takes about 10 sec and still not enough.
+# Default is 2e+05.
 ```
