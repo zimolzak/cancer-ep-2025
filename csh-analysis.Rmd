@@ -7,6 +7,8 @@ output: pdf_document
 library(readxl)
 library(dplyr)
 library(ggplot2)
+library(knitr)
+library(tidyr)
 ```
 
 
@@ -30,14 +32,84 @@ analytic_data <- bcm_colorectal_cancer_NK_2_21_25 %>%
       ED_days <= 30 ~ TRUE,
       Inp_days <= 30 ~ TRUE,
       .default = FALSE
-    )
+    ),
+    Age_yrs_at_dx = as.numeric(Date_of_first_diagnosis - birth_dt_tm, units="days") / 365.25,
+    Race = as.factor(race_desc_raw)
   )
 
 qplot(analytic_data$ED_days)
 qplot(analytic_data$Inp_days)
 
 summary(analytic_data$ED_days)
+```
 
-table(analytic_data$is_EP)
+
+
+# Proposed Analysis
+
+```{r ep-rate}
+analytic_data %>%
+  count(is_EP) %>% 
+  mutate(
+    Total = sum(n),
+    Percent = round(n / Total * 100, 1)
+  ) %>% 
+  kable()
+  
+```
+
+
+
+Analysis we wanted?
+
+- Simple proportion of EP divided by all cases (EP rate.)
+- Associations with basic demographics
+    - age
+    - race
+    - geography (region)
+    - ZIP linked to (if possible):
+        - CDC
+        - per capita income (quintiles or absolute)
+
+Broadly, same as Cosmos paper. https://pubmed.ncbi.nlm.nih.gov/39394724/
+
+Zimolzak AJ, Khan SP, Singh H, Davila JA. Application of a digital quality measure for cancer diagnosis in Epic Cosmos. *J Am Med Inform Assoc.* 2025;32(1):227--229.
+
+
+
+
+# Bivariate
+
+## Age
+
+```{r bivariate-age}
+analytic_data %>%
+  ggplot(aes(x = Age_yrs_at_dx, fill = is_EP)) +
+  geom_histogram()
+
+analytic_data %>% 
+  ggplot(aes(x = Age_yrs_at_dx, fill = is_EP)) +
+  geom_boxplot(notch = TRUE, outlier.size = 2, outlier.alpha = 0.75, outlier.shape = 1)
+
+t.test(Age_yrs_at_dx ~ is_EP, data = analytic_data)
+```
+
+## Race
+
+```{r race}
+analytic_data %>% 
+  count(Race) %>% 
+  arrange(desc(n)) %>% 
+  mutate(
+    Total = sum(n),
+    Percent = round(n / Total * 100, 1)
+  ) %>%
+  kable()
+  
+
+analytic_data %>% 
+  count(is_EP, Race) %>% 
+  pivot_wider(names_from = Race, values_from = n) %>% 
+  kable()
 ```
 
