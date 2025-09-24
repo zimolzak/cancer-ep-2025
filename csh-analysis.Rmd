@@ -146,3 +146,22 @@ fisher.test(race_contingency, simulate.p.value = TRUE)
 # 2e+08 takes about 10 sec and still not enough.
 # Default is 2e+05.
 ```
+
+# Census data
+
+```{r import-census}
+library(readr)
+SVI_2022_US_ZCTA <- read_csv("SVI_2022_US_ZCTA.csv")
+
+ncols_income <- 171  #  Will break if columns vary.
+coltype_str <- paste(c("cc", rep("d", 171 - 2)), collapse = '')
+
+income2 <- read_csv("ACSST5Y2023.S1902-Data.csv", col_types = coltype_str, n_max = 1000)
+
+income2 <- income2[-1,]
+```
+
+- `SVI_2022_US_ZCTA.csv` 20.7 MB
+- `ACSST5Y2023.S1901-Data.csv` 28.5 MB
+- `ACSST5Y2023.S1902-Data.csv` 35.8 MB
+
