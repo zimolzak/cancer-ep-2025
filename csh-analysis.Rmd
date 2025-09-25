@@ -9,16 +9,44 @@ library(dplyr)
 library(ggplot2)
 library(knitr)
 library(tidyr)
+library(readr)
 ```
 
 ```{r import, include=FALSE}
+# CSH data
 bcm_colorectal_cancer_NK_2_21_25 <- read_excel("bcm_colorectal_cancer.NK.2.21.25.xlsx", 
     col_types = c("numeric", "text", "date", 
         "text", "text", "text", "date", "date", 
         "date", "text", "text", "date", "date"))
+
+# Social vuln index
+SVI_2022_US_ZCTA <- read_csv("SVI_2022_US_ZCTA.csv")
+
+# ACS income and remove weird row
+ncols_income <- 171  #  Will break if columns vary.
+coltype_str <- paste(c("cc", rep("d", 171 - 2)), collapse = '')
+income2 <- read_csv("ACSST5Y2023.S1902-Data.csv", col_types = coltype_str, n_max = 1000)
+income2 <- income2[-1,]
+
+# Income column metadata
+Metadata <- read_csv("ACSST5Y2023.S1902-Column-Metadata.csv")
+
+Metadata <- Metadata %>% 
+  mutate(Label_readable = gsub("!!", ": ", Label))
+
+# separate wider delim()
 ```
 
-# Data size
+Census data:
+
+- `SVI_2022_US_ZCTA.csv` 20.7 MB
+- `ACSST5Y2023.S1901-Data.csv` 28.5 MB
+- `ACSST5Y2023.S1902-Data.csv` 35.8 MB
+
+
+
+
+# Data size and tidying
 
 ```{r print}
 dim(bcm_colorectal_cancer_NK_2_21_25)
@@ -146,22 +174,3 @@ fisher.test(race_contingency, simulate.p.value = TRUE)
 # 2e+08 takes about 10 sec and still not enough.
 # Default is 2e+05.
 ```
-
-# Census data
-
-```{r import-census}
-library(readr)
-SVI_2022_US_ZCTA <- read_csv("SVI_2022_US_ZCTA.csv")
-
-ncols_income <- 171  #  Will break if columns vary.
-coltype_str <- paste(c("cc", rep("d", 171 - 2)), collapse = '')
-
-income2 <- read_csv("ACSST5Y2023.S1902-Data.csv", col_types = coltype_str, n_max = 1000)
-
-income2 <- income2[-1,]
-```
-
-- `SVI_2022_US_ZCTA.csv` 20.7 MB
-- `ACSST5Y2023.S1901-Data.csv` 28.5 MB
-- `ACSST5Y2023.S1902-Data.csv` 35.8 MB
-
