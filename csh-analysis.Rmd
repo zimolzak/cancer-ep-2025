@@ -176,9 +176,12 @@ fisher.test(race_contingency, simulate.p.value = TRUE)
 ```
 
 
+
+\newpage
+
 # Tables like *JAMIA*
 
-```{r Table-1}
+```{r Table-1, echo=FALSE}
 rt2 <- analytic_data %>% 
   group_by(Race) %>% 
   summarise(
@@ -209,5 +212,13 @@ rbind(rt2, at2) %>% kable()
 ```
 
 
-At the national scale, the EP rate for patients newly diagnosed with colorectal cancer was xx%  ( nn / dd cancer diagnoses). Table 1 outlines the characteristics of all patients with incident colorectal cancer and the subset with EP. 
+```{r dummy-vars, echo=FALSE}
+eprate <- 999
+numer <- 999
+denom <- 999
+```
+
+
+
+At the hospital network level, the EP rate for patients newly diagnosed with colorectal cancer was `r eprate`%  (`r numer` / `r denom` cancer diagnoses). Table 1 outlines the characteristics of all patients with incident colorectal cancer and the subset with EP. 
 
