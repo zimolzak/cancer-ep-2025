@@ -6,3 +6,6 @@
 *.html
 .Rhistory
 ACSST5Y2023.S1902-Table-Notes.txt
+.DS_Store
+*.zip
+.RData
