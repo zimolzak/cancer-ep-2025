@@ -174,3 +174,40 @@ fisher.test(race_contingency, simulate.p.value = TRUE)
 # 2e+08 takes about 10 sec and still not enough.
 # Default is 2e+05.
 ```
+
+
+# Tables like *JAMIA*
+
+```{r Table-1}
+rt2 <- analytic_data %>% 
+  group_by(Race) %>% 
+  summarise(
+    New.cases.cancer.EP = sum(is_EP),
+    New.cases.cancer = n(),
+    EP.rate = round(mean(is_EP) * 100, 1)
+  ) %>% 
+  rename(Characteristic = Race) %>% 
+  mutate(factor = "Race") %>% 
+  select(factor, Characteristic, New.cases.cancer, New.cases.cancer.EP, EP.rate) %>% 
+  arrange(desc(New.cases.cancer)) 
+
+at2 <- analytic_data %>%
+  mutate(Characteristic = as.character(ntile(Age_yrs_at_dx, 4))) %>% 
+  group_by(Characteristic) %>% 
+  summarise(
+    New.cases.cancer.EP = sum(is_EP),
+    New.cases.cancer = n(),
+    EP.rate = round(mean(is_EP) * 100, 1)
+  ) %>% 
+  mutate(factor = "Age quartile")
+
+
+
+
+rbind(rt2, at2) %>% kable()
+
+```
+
+
+At the national scale, the EP rate for patients newly diagnosed with colorectal cancer was xx%  ( nn / dd cancer diagnoses). Table 1 outlines the characteristics of all patients with incident colorectal cancer and the subset with EP. 
+
